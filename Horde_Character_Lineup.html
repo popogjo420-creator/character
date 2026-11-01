@@ -1770,9 +1770,9 @@ function cyclops() {
     // together; the leg itself drapes close over the shoulder, nothing else in front
     const paws = [];
     for (const s of [1, -1]) {
-      const a = [s * 0.5, (s > 0 ? tL : tR)[1] + 0.0, -0.05], m = S([s * 0.4, J.head[1] - 0.3, 0], [0, 0, 1], 0.06, 'torso') || [s * 0.4, J.head[1] - 0.3, 0.45], e = S([s * 0.2, J.head[1] - 0.62, 0], [0, 0, 1], 0.07, 'torso') || [s * 0.2, J.head[1] - 0.62, 0.45];
-      add2(SDF.cap(a, m, 0.11, 0.095, 0.05), SDF.cap(m, e, 0.095, 0.085, 0.05), SDF.ell([e[0], e[1] - 0.08, e[2] + 0.02], [0.14, 0.09, 0.16], 0.04));
-      for (let i = -1.5; i <= 1.5; i++) add2(SDF.sphere([e[0] + i * 0.07, e[1] - 0.12, e[2] + 0.1 - Math.abs(i) * 0.015], 0.04, 0.02));
+      const a = [s * 0.5, (s > 0 ? tL : tR)[1] + 0.0, -0.05], m = S([s * 0.56, J.head[1] - 0.25, 0], [0, 0, 1], 0.05, 'torso') || [s * 0.56, J.head[1] - 0.25, 0.4], e = S([s * 0.56, J.head[1] - 0.5, 0], [0, 0, 1], 0.05, 'torso') || [s * 0.56, J.head[1] - 0.5, 0.4];
+      add2(SDF.cap(a, m, 0.1, 0.085, 0.05), SDF.cap(m, e, 0.085, 0.075, 0.05), SDF.ell([e[0], e[1] - 0.07, e[2] + 0.01], [0.12, 0.08, 0.14], 0.04));
+      for (let i = -1.5; i <= 1.5; i++) add2(SDF.sphere([e[0] + i * 0.06, e[1] - 0.1, e[2] + 0.09 - Math.abs(i) * 0.012], 0.035, 0.02));
       paws.push({ e, s });
     }
     const bbear = implicitBody(bp2, bs2, 0.06), bm = bbear.mesh([-1.45, J.head[1] - 1.1, -0.85], [1.45, HY + 0.55, 1.1], 0.016);
@@ -1809,8 +1809,8 @@ function cyclops() {
       B.add('bearEye', G.ball(0.085, dead, null, 2), G.ball(0.05, '#8f948a', { p: [0, 0, 0.065], s: [1, 1, 0.5] }, 1), G.ball(0.022, '#2a2a28', { p: [0, 0.005, 0.08], s: [1, 1, 0.45] }, 1), G.box(0.012, 0.19, 0.012, '#6b3a3a', { p: [0, 0, 0.083], r: [0, 0, 0.75] }), G.ball(0.03, '#7a2e2e', { p: [0.03, -0.03, 0.07], s: [1, 1, 0.3] }, 0));
       B.add('chest', G.ball(0.1, bear, { p: L('chest', [ep[0], ep[1] + 0.055, ep[2] + 0.02]), s: [1.1, 0.35, 0.9] }, 1), G.ball(0.095, bearDk, { p: L('chest', [ep[0], ep[1] - 0.07, ep[2] + 0.02]), s: [1.1, 0.25, 0.8] }, 1)); }
     // claws on the forepaws, and the cord tying them together
-    for (const { e } of paws) for (let i = -1.5; i <= 1.5; i++) B.add('chest', G.cone(0.022, 0.13, 4, clawC, { p: L('chest', [e[0] + i * 0.07, e[1] - 0.21, e[2] + 0.12 - Math.abs(i) * 0.015]), r: [PI + 0.3, 0, i * 0.08] }));
-    { const a = paws[0].e, b2 = paws[1].e; B.add('chest', G.stick(L('chest', [a[0] - 0.08, a[1] - 0.1, a[2] + 0.1]), L('chest', [b2[0] + 0.08, b2[1] - 0.1, b2[2] + 0.1]), 0.018, 0.018, ropeDk, 4), G.ball(0.04, rope, { p: L('chest', [0, a[1] - 0.1, a[2] + 0.12]) }, 0), G.stick(L('chest', [0, a[1] - 0.1, a[2] + 0.12]), L('chest', [0.04, a[1] - 0.32, a[2] + 0.1]), 0.014, 0.01, rope, 4)); }
+    for (const { e } of paws) for (let i = -1.5; i <= 1.5; i++) B.add('chest', G.cone(0.02, 0.12, 4, clawC, { p: L('chest', [e[0] + i * 0.06, e[1] - 0.18, e[2] + 0.11 - Math.abs(i) * 0.012]), r: [PI + 0.3, 0, i * 0.08] }));
+    { const ca = S([0.42, J.head[1] - 0.2, 0], [0, 0, 1], 0.05, 'torso'), cb = S([-0.42, J.head[1] - 0.2, 0], [0, 0, 1], 0.05, 'torso'); if (ca && cb) B.add('chest', G.stick(L('chest', ca), L('chest', cb), 0.016, 0.016, ropeDk, 4), G.ball(0.035, rope, { p: L('chest', [0, ca[1] - 0.01, ca[2] + 0.02]) }, 0), G.stick(L('chest', [0, ca[1] - 0.01, ca[2] + 0.02]), L('chest', [0.03, ca[1] - 0.2, ca[2]]), 0.012, 0.009, rope, 4)); }
     // the hide: from under the mantle down his back to the ground, flaring, ragged; the hind legs and their paws hang
     // off the bottom corners
     const top = [0, J.head[1] - 0.2, -0.62], CH = top[1] - 0.02, wTop = 1.7, wBot = 2.4, wrap = 0.1, flare = 0.3;
