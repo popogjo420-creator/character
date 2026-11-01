@@ -1729,6 +1729,11 @@ function cyclops() {
       return !(v > 0.45 && ((iu * 7 + iv * 13) % 23 === 0 || (iu * 5 + iv * 11) % 29 === 0));
     } });
   B.add('chest', vest);
+  // collar: a darker band of cloth following the neckline all the way round, stitched; hem band along the bottom
+  { const N = 26, pts = []; for (let i = 0; i <= N; i++) { const th = 0.45 + i / N * (TAU - 0.9), p = S([0, J.head[1] - 0.06, 0], [Math.sin(th), 0, Math.cos(th)], 0.055, 'torso'); pts.push(p ? L('chest', p) : null); }
+    for (let i = 0; i < N; i++) if (pts[i] && pts[i + 1]) { const th = 0.45 + (i + 0.5) / N * (TAU - 0.9); if (Math.abs(th - PI / 2) < 0.62 || Math.abs(th - 3 * PI / 2) < 0.62) continue; B.add('chest', G.stick(pts[i], pts[i + 1], 0.035, 0.035, clothDk, 4), G.box(0.012, 0.024, 0.012, '#9a8f78', { p: [(pts[i][0] + pts[i + 1][0]) / 2 + Math.sin(th) * 0.03, (pts[i][1] + pts[i + 1][1]) / 2 - 0.03, (pts[i][2] + pts[i + 1][2]) / 2 + Math.cos(th) * 0.03], r: [0, th, 0.5] })); }
+    const H = []; for (let i = 0; i <= N; i++) { const th = 0.45 + i / N * (TAU - 0.9), p = S([0, J.head[1] - 0.06 - 1.06 * 0.9, 0], [Math.sin(th), 0, Math.cos(th)], 0.06, 'torso'); H.push(p ? L('chest', p) : null); }
+    for (let i = 0; i < N; i++) if (H[i] && H[i + 1]) B.add('chest', G.stick(H[i], H[i + 1], 0.03, 0.03, i % 2 ? clothDk : clothLt, 4)); }
   for (const s of [1, -1]) { const pts = [...Array(9)].map((_, i) => S([s * 0.4, J.head[1] - 0.25, 0.36 - i * 0.09], [0, 1, 0], 0.04, 'torso')).filter(Boolean);
     for (let i = 0; i < pts.length - 1; i++) B.add('chest', G.stick(L('chest', pts[i]), L('chest', pts[i + 1]), 0.05, 0.05, i % 2 ? cloth : clothLt, 4), ...(i % 2 ? HW.stitches(L('chest', [pts[i][0] + s * 0.04, pts[i][1] + 0.02, pts[i][2]]), L('chest', [pts[i + 1][0] + s * 0.04, pts[i + 1][1] + 0.02, pts[i + 1][2]]), 3, 0.02, linen) : [])); }
   for (const [y, w] of [[2.55, 0.0], [2.35, -0.05], [2.15, -0.02]]) { const a = S([0, y, 0], [Math.sin(0.5), 0, Math.cos(0.5)], 0.07, 'torso'), b = S([0, y, 0], [Math.sin(-0.5), 0, Math.cos(-0.5)], 0.07, 'torso');
@@ -1877,12 +1882,12 @@ function cyclops() {
     B.add('hips', band(0.064, 0.025, HW.iron, { p: pts[0] }), G.ball(0.055, '#3a2a1e', { p: F([0.0, -0.015, 0.0]), s: [1, 0.3, 1] }, 1), G.stick(F([0.0, 0.03, 0.0]), F([0.05, -0.02, 0.0]), 0.007, 0.007, ropeDk, 4), G.ball(0.012, rope, { p: F([0.0, 0.03, 0.0]) }, 0)); } }
   { const f = onTorso(1.56, 0, 0.012), bk = onTorso(1.56, PI, 0.012);
     B.part('flapF', 'hips', L('hips', f || [0, 1.56, 0.36])).part('flapB', 'hips', L('hips', bk || [0, 1.56, -0.36]));
-    B.add('flapF', sheet(0.72, 0.8, 0.98, hide, { wrap: -0.08, tatter: 0.14, sx: 12, sy: 9 }),
+    B.add('flapF', sheet(0.72, 0.8, 0.98, hide, { wrap: -0.08, tatter: 0.14, sx: 12, sy: 9 }), G.box(0.72, 0.06, 0.016, hideDk, { p: [0, -0.03, 0.006] }), ...HW.stitches([-0.34, -0.06, 0.016], [0.34, -0.06, 0.016], 10, 0.022, '#9a8f78'), G.box(0.74, 0.04, 0.012, hideDk, { p: [0, -0.86, 0.008], r: [0, 0, 0.03] }), ...HW.stitches([-0.3, -0.86, 0.016], [0.3, -0.86, 0.016], 9, 0.02, '#9a8f78'),
       G.box(0.19, 0.17, 0.006, hideLt, { p: [0.14, -0.48, 0.01] }), G.box(0.13, 0.2, 0.006, hideDk, { p: [-0.2, -0.68, 0.012], r: [0, 0, 0.2] }),
       ...[0, 1, 2, 3].map(i => G.box(0.006, 0.04, 0.004, linen, { p: [0.14 + (i - 1.5) * 0.05, -0.38, 0.014] })), ...[0, 1, 2, 3].map(i => G.box(0.006, 0.04, 0.004, linen, { p: [0.14 + (i - 1.5) * 0.05, -0.58, 0.014] })), ...[0, 1, 2].map(i => G.box(0.006, 0.04, 0.004, linen, { p: [-0.2 + (i - 1) * 0.045, -0.8, 0.016], r: [0, 0, 0.2] })),
       strip(0.26, 0.022, scar, { p: [-0.06, -0.22, 0.012], r: [0, 0, 0.9] }), ...HW.stitches([-0.3, -0.06, 0.012], [0.3, -0.06, 0.012], 8, 0.025, '#2e2622'),
       ...[-0.22, 0.22].map(x => HW.tooth([x, -0.08, 0.02], 0.07)));
-    B.add('flapB', sheet(0.72, 0.8, 0.9, hide, { wrap: -0.08, tatter: 0.14, sx: 12, sy: 9, t: { r: [0, PI, 0] } }),
+    B.add('flapB', sheet(0.72, 0.8, 0.9, hide, { wrap: -0.08, tatter: 0.14, sx: 12, sy: 9, t: { r: [0, PI, 0] } }), G.box(0.72, 0.06, 0.016, hideDk, { p: [0, -0.03, -0.006] }), ...HW.stitches([-0.34, -0.06, -0.016], [0.34, -0.06, -0.016], 10, 0.022, '#9a8f78'), G.box(0.74, 0.04, 0.012, hideDk, { p: [0, -0.8, -0.008] }),
       G.box(0.17, 0.19, 0.006, hideDk, { p: [-0.08, -0.55, -0.012], r: [0, 0, -0.15] }), ...[0, 1, 2].map(i => G.box(0.006, 0.04, 0.004, linen, { p: [-0.08 + (i - 1) * 0.05, -0.43, -0.016], r: [0, 0, -0.15] })), ...HW.stitches([-0.3, -0.06, -0.012], [0.3, -0.06, -0.012], 8, 0.025, '#2e2622'));
     acc.push({ part: 'flapF', c: [0, -0.95, 0], r: 0.5, col: dirt, mix: 0.5, e: [1.5, 0.5, 1] }, { part: 'flapB', c: [0, -0.88, 0], r: 0.5, col: dirt, mix: 0.5, e: [1.5, 0.5, 1] });
     splash([0.22, -0.35, 0], 0.14, 0.3, acc, 'flapF'); }
@@ -1914,31 +1919,13 @@ function cyclops() {
     for (const [y, h, col] of [[-up - 0.24, 0.1, '#8f8570'], [-up - 0.3, 0.03, '#a3987e'], [-up - 0.18, 0.03, '#9a9078']]) { const bd = armBand(1, 'f', y, h, col, 0.005); if (bd) B.add('fArmL', bd.geo); }
     acc.push({ part: 'fArmL', c: fl([0.1, -up - 0.25, 0.08]), r: 0.09, col: blood, mix: 0.5 }, { part: 'fArmL', c: fl([0, -up - 0.22, 0]), r: 0.25, col: dirt, mix: 0.35 });
   }
-  /* ---- the hands, hard pieces on the forearms like everyone's. Left: an open hand hanging, a palm with the heel of
-     the hand, four blocky fingers in three joints with knuckles, fingertips and nails, a thumb, a bone ring. Right: the
-     lineup's faceted fist, the players' own, at his size, closed round the club's grip with a ridge of knuckles and
-     the thumb folded over the top; the grip runs through it ---- */
-  { const y0 = -fore, z0 = 0.02, o = [], dir = a => [-Math.sin(a), -Math.cos(a), 0], dors = a => [Math.cos(a), -Math.sin(a), 0];
-    o.push(G.taper(0.075, 0.15, 0.095, 0.21, 0.2, skin, { p: [0, y0 - 0.1, z0] }), G.ball(0.075, skin, { p: [0, y0 - 0.02, z0], s: [1, 0.8, 1.25] }, 1), G.ball(0.05, skin, { p: [0.0, y0 - 0.19, z0], s: [1, 0.5, 2.1] }, 1));
-    const zs = [0.078, 0.026, -0.026, -0.078], len = [0.95, 1, 0.95, 0.78];
-    for (let i = 0; i < 4; i++) {
-      const z = z0 + zs[i], q = len[i], Ls = [0.1 * q, 0.08 * q, 0.065 * q], as = [0.2, 0.55, 0.9], w = 0.046, ws = [0.052, 0.048, 0.044]; let p = [0, y0 - 0.2, z];
-      o.push(G.ball(0.031, skin, { p, s: [1, 0.9, 1] }, 0));
-      for (let j = 0; j < 3; j++) { const d = dir(as[j]), c = [p[0] + d[0] * Ls[j] / 2, p[1] + d[1] * Ls[j] / 2, p[2]], n = [p[0] + d[0] * Ls[j], p[1] + d[1] * Ls[j], p[2]];
-        o.push(G.taper(ws[j], w, ws[j] * 0.94, w * 0.96, Ls[j], skin, { p: c, r: [0, 0, -as[j]] })); if (j < 2) o.push(G.ball(ws[j + 1] * 0.55, skin, { p: n }, 0)); else { const k = dors(as[j]); o.push(G.ball(ws[j] * 0.48, skin, { p: n }, 0), G.box(0.012, 0.028, 0.03, tusk, { p: [n[0] - d[0] * 0.012 + k[0] * 0.02, n[1] - d[1] * 0.012 + k[1] * 0.02, n[2]], r: [0, 0, -as[j]] })); }
-        p = n; }
-      if (i === 0) o.push(G.torus(0.04, 0.011, bone, { p: [0, y0 - 0.2 - 0.05 * Math.cos(0.2), z], r: [0, 0, -0.2] }));
-    }
-    const T0 = [0.0, y0 - 0.1, z0 + 0.1], T1 = [-0.06, y0 - 0.19, z0 + 0.17], T2 = [-0.13, y0 - 0.26, z0 + 0.21];
-    o.push(G.ball(0.036, skin, { p: T0 }, 0), G.stick(T0, T1, 0.034, 0.031, skin, 6), G.ball(0.03, skin, { p: T1 }, 0), G.stick(T1, T2, 0.03, 0.026, skin, 6), G.ball(0.024, skin, { p: T2 }, 0), G.box(0.012, 0.026, 0.028, tusk, { p: [T2[0] + 0.012, T2[1] + 0.012, T2[2] + 0.004], r: [0.5, 0, -0.6] }));
-    B.add('fArmL', ...o);
-    acc.push({ part: 'fArmL', c: [0, y0 - 0.2, z0], r: 0.12, col: skinDk, mix: 0.35, e: [1, 0.25, 1.8] }, { part: 'fArmL', c: [-0.03, y0 - 0.1, z0], r: 0.1, col: rosy, mix: 0.3 }, { part: 'fArmL', c: [0.045, y0 - 0.13, z0], r: 0.1, col: dirt, mix: 0.3 });
-    for (const z of [0.052, 0, -0.052]) acc.push({ part: 'fArmL', c: [0, y0 - 0.3, z0 + z], r: 0.16, col: skinDk, mix: 0.5, e: [1, 1, 0.05] }); }
-  { const fy = -fore - 0.2, o = gauntletFist(fy + 0.1925, -1, 3.5, skin).map(g2 => place(g2, { p: [gripX, 0, 0] }));
-    for (let i = 0; i < 4; i++) { const z = 0.1 - i * 0.066; o.push(G.ball(0.04, skin, { p: [gripX - 0.1, fy - 0.11, z], s: [1, 1, 0.8] }, 0), G.ball(0.034, skin, { p: [gripX - 0.12, fy - 0.03, z], s: [0.7, 1.2, 0.8] }, 0)); }
-    const T0 = [gripX - 0.08, fy + 0.15, 0.15], T1 = [gripX + 0.06, fy + 0.15, 0.17], T2 = [gripX + 0.15, fy + 0.07, 0.17];
-    o.push(G.ball(0.042, skin, { p: T0 }, 0), G.stick(T0, T1, 0.042, 0.038, skin, 6), G.ball(0.036, skin, { p: T1 }, 0), G.stick(T1, T2, 0.036, 0.03, skin, 6), G.ball(0.028, skin, { p: T2 }, 0), G.box(0.028, 0.026, 0.012, tusk, { p: [T2[0] + 0.01, T2[1] - 0.006, T2[2] + 0.026], r: [0, 0.4, -0.6] }));
-    B.add('fArmR', ...o);
+  /* ---- the hands: the lineup's own faceted fists, the ones every character wears, at his size. Left: the fist hangs
+     at the wrist with a ridge of knuckles, the thumb folded over the front and a bone ring. Right: the same fist closed
+     round the club's grip, which runs through it ---- */
+  { const fy = -fore - 0.06; B.add('fArmL', ...gauntletFist(fy + 0.1925, 1, 3.5, skin), G.torus(0.046, 0.012, bone, { p: [0.11, fy - 0.05, 0.034], r: [0, 0, PI / 2] }));
+    for (const z of [0.067, 0, -0.067]) acc.push({ part: 'fArmL', c: [0.08, fy - 0.08, z], r: 0.18, col: skinDk, mix: 0.5, e: [1, 1, 0.05] });
+    acc.push({ part: 'fArmL', c: [0.12, fy - 0.1, 0], r: 0.2, col: rosy, mix: 0.35 }, { part: 'fArmL', c: [0, fy, 0], r: 0.3, col: dirt, mix: 0.3 }); }
+  { const fy = -fore - 0.2; B.add('fArmR', ...gauntletFist(fy + 0.1925, -1, 3.5, skin).map(g2 => place(g2, { p: [gripX, 0, 0] })));
     for (const z of [0.067, 0, -0.067]) acc.push({ part: 'fArmR', c: [gripX - 0.08, fy - 0.08, z], r: 0.18, col: skinDk, mix: 0.5, e: [1, 1, 0.05] });
     acc.push({ part: 'fArmR', c: [gripX - 0.12, fy - 0.1, 0], r: 0.2, col: rosy, mix: 0.35 }, { part: 'fArmR', c: [gripX, fy, 0], r: 0.3, col: dirt, mix: 0.3 }); }
   /* ---- on the legs: hide shin wraps laced criss-cross with rope, a knot and loose end, mud at the bottom; toenails;
@@ -1965,7 +1952,7 @@ function cyclops() {
      pointed ears, warts and curls of hair; freckles, dirt, a bruise and a little blood painted on ---- */
   const bx = shX + 0.04 * k, by = torso + 0.33;
   B.part('babyHips', 'chest', [bx, by, 0]).part('babyChest', 'babyHips', [0, 0.085, 0]).part('babyHead', 'babyChest', [0, 0.2, 0])
-    .part('babyArmL', 'babyChest', [0.105, 0.13, 0]).part('babyArmR', 'babyChest', [-0.105, 0.13, 0]).part('babyClub', 'babyArmL', [0, -0.24, 0.015])
+    .part('babyArmL', 'babyChest', [0.105, 0.13, 0]).part('babyArmR', 'babyChest', [-0.105, 0.13, 0]).part('babyClub', 'babyArmL', [0, -0.24, 0.012])
     .part('babyLegL', 'babyHips', [0.058, -0.03, 0.0]).part('babyLegR', 'babyHips', [-0.058, -0.03, 0.0]);
   for (const n of ['babyHips', 'babyChest', 'babyHead', 'babyArmL', 'babyArmR', 'babyClub', 'babyLegL', 'babyLegR']) { const p = B.parts.get(n), q = J[p.parent]; J[n] = [q[0] + p.at[0], q[1] + p.at[1], q[2] + p.at[2]]; }
   const bh = J.babyHips, bHC = [bh[0], J.babyHead[1] + 0.145, 0], bp = [], bs = [], badd = (g, ...ps) => { for (const p of ps) { p.g = g; bp.push(p); } };
@@ -1985,7 +1972,7 @@ function cyclops() {
   for (const s of [1, -1]) {
     const A = p => bArmPt(s, p), hp = J[s > 0 ? 'babyLegL' : 'babyLegR'], kn = [hp[0], hp[1] - 0.09, 0.005], a = [hp[0], hp[1] - 0.18, 0];
     badd('bArm' + (s > 0 ? 'L' : 'R'), SDF.sphere(A([0, 0, 0]), 0.05, 0.03), SDF.cap(A([0, 0, 0]), A([0, -0.09, 0]), 0.04, 0.035, 0.03), SDF.sphere(A([0, -0.09, 0]), 0.036, 0.02), SDF.cap(A([0, -0.09, 0]), A([0, -0.2, 0.01]), 0.035, 0.03, 0.02),
-      SDF.ell(A([0, -0.235, 0.012]), [0.03, 0.05, 0.042], 0.012), SDF.cap(A([0, -0.2, 0.035]), A([-0.01, -0.25, 0.065]), 0.013, 0.011, 0.006), SDF.sphere(A([0, -0.275, 0.03]), 0.02, 0.008));
+      SDF.ell(A([0, -0.205, 0.01]), [0.03, 0.035, 0.035], 0.012));
     badd('bLeg' + (s > 0 ? 'L' : 'R'), SDF.cap(hp, kn, 0.05, 0.04, 0.03), SDF.sphere(kn, 0.042, 0.02), SDF.cap(kn, a, 0.04, 0.032, 0.02), SDF.ell([a[0], a[1] - 0.02, 0.04], [0.04, 0.025, 0.07], 0.02), SDF.sphere([a[0] + s * 0.03, a[1] + 0.01, 0], 0.012, 0.006));
     for (let i = -1; i <= 1; i++) badd('bLeg' + (s > 0 ? 'L' : 'R'), SDF.sphere([a[0] + i * 0.025, a[1] - 0.03, 0.1 + (i === 0 ? 0.008 : 0)], 0.015 - Math.abs(i) * 0.002, 0.006));
   }
@@ -2029,6 +2016,9 @@ function cyclops() {
   const sackPt = (u, v) => { const th = u * TAU, y = bh[1] + 0.25 - v * 0.4, p = Sb([bh[0], y, 0], [Math.sin(th), 0, Math.cos(th)], 0.022 + 0.01 * Math.sin(th * 5 + v * 7), 'torso'); return p ? L('babyHips', p) : L('babyHips', [bh[0] + Math.sin(th) * 0.14, y, Math.cos(th) * 0.14]); };
   B.add('babyHips', ragShell({ around: 18, rows: 9, col: sack, tatter: 0.05, dark: 0.7, pt: sackPt, keep: (u, v, iu, iv) => !((iu === 3 && iv === 6) || (iu === 12 && iv === 4) || (iu === 8 && iv === 8)) }),
     G.ball(0.1, linen, { p: [0, -0.03, 0], s: [1.15, 0.7, 1.05] }, 1), G.ball(0.02, linen, { p: [0.11, -0.02, 0.06], s: [1, 1.6, 1] }, 0));
+  // collar band round the neck hole, a darker hem band, and the edges of the arm holes rolled over
+  { const N = 14; for (let i = 0; i < N; i++) { const a = sackPt(i / N, 0.0), b2 = sackPt((i + 1) / N, 0.0), h1 = sackPt(i / N, 0.97), h2 = sackPt((i + 1) / N, 0.97); if (a && b2) B.add('babyHips', G.stick(a, b2, 0.011, 0.011, sackDk, 4)); if (h1 && h2) B.add('babyHips', G.stick(h1, h2, 0.009, 0.009, i % 2 ? sackDk : sackLt, 4)); } }
+  for (const s of [1, -1]) { const q = Sb([bh[0] + s * 0.11, bh[1] + 0.23, 0], [s, 0, 0], 0.03, 'torso'); if (q) B.add('babyChest', G.torus(0.045, 0.01, sackDk, { p: L('babyChest', q), r: [0, PI / 2, 0], s: [1, 1.2, 1] })); }
   { const pts = [...Array(13)].map((_, i) => { const th = i * TAU / 12, p = Sb([bh[0], bh[1] + 0.02, 0], [Math.sin(th), 0, Math.cos(th)], 0.04, 'torso'); return p ? L('babyHips', p) : null; });
     for (let i = 0; i < 12; i++) if (pts[i] && pts[i + 1]) B.add('babyHips', G.stick(pts[i], pts[i + 1], 0.012, 0.012, i % 2 ? rope : ropeDk, 4), G.ball(0.014, ropeDk, { p: pts[i] }, 0));
     const kp = pts[1]; if (kp) B.add('babyHips', G.ball(0.022, rope, { p: kp }, 0), G.stick(kp, [kp[0] + 0.02, kp[1] - 0.09, kp[2] - 0.01], 0.007, 0.005, rope, 4), G.stick(kp, [kp[0] - 0.02, kp[1] - 0.07, kp[2] + 0.02], 0.007, 0.005, rope, 4), ...[0, 1, 2].map(i => G.cone(0.003, 0.02, 3, HW.ropeLt, { p: [kp[0] + 0.02 + (i - 1) * 0.006, kp[1] - 0.1, kp[2] - 0.01], r: [PI + (i - 1) * 0.3, 0, (i - 1) * 0.3] }))); }
@@ -2041,7 +2031,7 @@ function cyclops() {
   { const N = 16, pts = []; for (let i = 0; i <= N; i++) { const a = -PI + i * TAU / N, y = bh[1] + 0.3 - 0.04 * Math.max(0, Math.cos(a)), p = Sb([bh[0], y, 0], [Math.sin(a), 0, Math.cos(a)], 0.01, 'torso'); pts.push(p ? L('babyChest', p) : null); }
     for (let i = 0; i < N; i++) if (pts[i] && pts[i + 1]) { B.add('babyChest', G.stick(pts[i], pts[i + 1], 0.004, 0.004, ropeDk, 4)); if (i % 2 && Math.abs(i - N / 2) < 6) { const p = pts[i]; B.add('babyChest', ...(i % 4 === 1 ? HW.bit(p, [p[0], p[1] - 0.03, p[2] + 0.002], 0.004) : [HW.tooth([p[0], p[1] - 0.012, p[2]], 0.02)])); } }
     const f = pts[N / 2]; if (f) B.add('babyChest', ...HW.skull(0.02, [f[0], f[1] - 0.04, f[2] + 0.01], [0.3, 0, 0], boneDk)); }
-  for (const [S2, s] of [['L', 1], ['R', -1]]) { const hp = J['babyLeg' + S2], a = [hp[0], hp[1] - 0.18, 0]; B.add('babyArm' + S2, G.box(0.012, 0.01, 0.014, tusk, { p: [-0.012, -0.285, 0.035], r: [0.5, 0, 0] })); for (let i = -1; i <= 1; i++) B.add('babyLeg' + S2, G.box(0.01, 0.005, 0.009, tusk, { p: L('babyLeg' + S2, [a[0] + i * 0.025, a[1] - 0.02, 0.115 + (i === 0 ? 0.008 : 0)]) })); }
+  for (const [S2, s] of [['L', 1], ['R', -1]]) { const hp = J['babyLeg' + S2], a = [hp[0], hp[1] - 0.18, 0]; B.add('babyArm' + S2, ...gauntletFist(-0.2, s, 0.72, babySkin)); for (let i = -1; i <= 1; i++) B.add('babyLeg' + S2, G.box(0.01, 0.005, 0.009, tusk, { p: L('babyLeg' + S2, [a[0] + i * 0.025, a[1] - 0.02, 0.115 + (i === 0 ? 0.008 : 0)]) })); }
   B.add('babyArmR', band(0.034, 0.012, rope, { p: [0, -0.16, 0] }), ...[0, 1, 2, 3].map(i => G.box(0.006, 0.014, 0.005, i % 2 ? boneDk : bone, { p: [Math.cos(i * 1.2 - 1.8) * 0.036, -0.16, Math.sin(i * 1.2 - 1.8) * 0.036], r: [0, 1.8 - i * 1.2, 0] })));
   B.add('babyArmL', band(0.033, 0.01, bone, { p: [0, -0.13, 0] }));
   B.add('babyClub', ...spikedClub().map(g2 => g2.scale(0.34, 0.34, 0.34)));
