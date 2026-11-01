@@ -1655,11 +1655,14 @@ function cyclops() {
   }
   const body = implicitBody(pr, sb, 0.05), cell = 0.016;
   const big = body.meshBoxes([[[-1.008, -0.016, -0.656], [1.008, 3.632, 0.864]], [[1.008, 1.952, -0.656], [2.336, 3.36, 0.864]], [[-2.336, 1.952, -0.656], [-1.008, 3.36, 0.864]]], cell);
-  const claimHand = s => (x, y, z) => { const l = armLoc(s, [x, y, z]); return l[1] < wristY + 0.04 && Math.abs(l[0]) < 0.5 && Math.abs(l[2]) < 0.4; };
+  // each arm's skin belongs to its own bones outright (upper arm, forearm), with only a thin band at the shoulder and
+  // elbow shared, so nothing of the arm is left behind on the chest when it swings
+  const claimU = s => (x, y, z) => { const l = armLoc(s, [x, y, z]); return l[1] < -0.07 && l[1] > -up + 0.05 && Math.hypot(l[0], l[2]) < 0.32; };
+  const claimF = s => (x, y, z) => { const l = armLoc(s, [x, y, z]); return l[1] < -up - 0.05 && Math.hypot(l[0], l[2]) < 0.32; };
   const bigW = skinByBones(big.P, [
     { i: bi('hips'), s: 0.3, segs: [[[0, 1.45, 0], [0, 1.95, 0]], [[-0.4, 1.6, 0], [0.4, 1.6, 0]]] }, { i: bi('chest'), s: 0.3, segs: [[[0, 1.95, 0], J.head], [[-0.5, 2.55, 0], [0.5, 2.55, 0]]] },
     { i: bi('head'), s: 0.25, segs: [[J.head, [0, HC[1] + 0.35, 0]]] },
-    ...[1, -1].flatMap(s => [{ i: bi(s > 0 ? 'uArmL' : 'uArmR'), s: 0.2, segs: [[sh(s), armPt(s, [0, -up, 0])]] }, { i: bi(s > 0 ? 'fArmL' : 'fArmR'), s: 0.2, segs: [[armPt(s, [0, -up, 0]), armPt(s, [0, wristY - 0.3, 0.02])]], claim: claimHand(s) },
+    ...[1, -1].flatMap(s => [{ i: bi(s > 0 ? 'uArmL' : 'uArmR'), s: 0.2, segs: [[sh(s), armPt(s, [0, -up, 0])]], claim: claimU(s) }, { i: bi(s > 0 ? 'fArmL' : 'fArmR'), s: 0.2, segs: [[armPt(s, [0, -up, 0]), armPt(s, [0, wristY - 0.3, 0.02])]], claim: claimF(s) },
       { i: bi(s > 0 ? 'thighL' : 'thighR'), s: 0.2, segs: [[[s * J.thighL[0], J.thighL[1], 0], [s * J.thighL[0], J.shinL[1], 0]]] }, { i: bi(s > 0 ? 'shinL' : 'shinR'), s: 0.2, segs: [[[s * J.thighL[0], J.shinL[1], 0], [s * J.thighL[0], 0.05, 0.45]]] }]),
   ]);
   // painted skin (character space): tone zones (paler gut and inner arms, darker back and shoulders, warm face, hands,
@@ -1882,7 +1885,7 @@ function cyclops() {
      pointed ears, warts and curls of hair; freckles, dirt, a bruise and a little blood painted on ---- */
   const bx = shX + 0.04 * k, by = torso + 0.33;
   B.part('babyHips', 'chest', [bx, by, 0]).part('babyChest', 'babyHips', [0, 0.085, 0]).part('babyHead', 'babyChest', [0, 0.2, 0])
-    .part('babyArmL', 'babyChest', [0.105, 0.13, 0]).part('babyArmR', 'babyChest', [-0.105, 0.13, 0]).part('babyClub', 'babyArmL', [0, -0.185, 0])
+    .part('babyArmL', 'babyChest', [0.105, 0.13, 0]).part('babyArmR', 'babyChest', [-0.105, 0.13, 0]).part('babyClub', 'babyArmL', [0, -0.24, 0.015])
     .part('babyLegL', 'babyHips', [0.058, -0.03, 0.0]).part('babyLegR', 'babyHips', [-0.058, -0.03, 0.0]);
   for (const n of ['babyHips', 'babyChest', 'babyHead', 'babyArmL', 'babyArmR', 'babyClub', 'babyLegL', 'babyLegR']) { const p = B.parts.get(n), q = J[p.parent]; J[n] = [q[0] + p.at[0], q[1] + p.at[1], q[2] + p.at[2]]; }
   const bh = J.babyHips, bHC = [bh[0], J.babyHead[1] + 0.145, 0], bp = [], bs = [], badd = (g, ...ps) => { for (const p of ps) { p.g = g; bp.push(p); } };
@@ -1898,6 +1901,7 @@ function cyclops() {
   bs.push(SDF.sphere([bHC[0], bHC[1] + 0.01, 0.135], 0.058, 0.015), SDF.ell([bHC[0], bHC[1] - 0.088, 0.13], [0.05, 0.012, 0.03], 0.01), SDF.sphere([bHC[0] + 0.012, bHC[1] - 0.055, 0.165], 0.008, 0.004), SDF.sphere([bHC[0] - 0.012, bHC[1] - 0.055, 0.165], 0.008, 0.004), SDF.sphere([bHC[0] + 0.155, bHC[1], 0.0], 0.014, 0.004), SDF.sphere([bHC[0] - 0.155, bHC[1], 0.0], 0.014, 0.004));
   // the baby's arms are modelled straight out like its father's (bAB), its bind pose; mitten hands with a thumb
   const bAB = PI / 2, bsh = s => J[s > 0 ? 'babyArmL' : 'babyArmR'], bArmPt = (s, p) => { const o = bsh(s), c = Math.cos(s * bAB), sn = Math.sin(s * bAB); return [o[0] + c * p[0] - sn * p[1], o[1] + sn * p[0] + c * p[1], o[2] + p[2]]; };
+  const bArmLoc = (s, w) => { const o = bsh(s), c = Math.cos(s * bAB), sn = Math.sin(s * bAB), x = w[0] - o[0], y = w[1] - o[1]; return [c * x + sn * y, -sn * x + c * y, w[2] - o[2]]; };
   for (const s of [1, -1]) {
     const A = p => bArmPt(s, p), hp = J[s > 0 ? 'babyLegL' : 'babyLegR'], kn = [hp[0], hp[1] - 0.09, 0.005], a = [hp[0], hp[1] - 0.18, 0];
     badd('bArm' + (s > 0 ? 'L' : 'R'), SDF.sphere(A([0, 0, 0]), 0.05, 0.03), SDF.cap(A([0, 0, 0]), A([0, -0.09, 0]), 0.04, 0.035, 0.03), SDF.sphere(A([0, -0.09, 0]), 0.036, 0.02), SDF.cap(A([0, -0.09, 0]), A([0, -0.2, 0.01]), 0.035, 0.03, 0.02),
@@ -1909,7 +1913,7 @@ function cyclops() {
   const smallW = skinByBones(small.P, [
     { i: bi('babyHips'), s: 0.05, segs: [[[bh[0], bh[1] - 0.05, 0], [bh[0], bh[1] + 0.085, 0]]] }, { i: bi('babyChest'), s: 0.05, segs: [[[bh[0], bh[1] + 0.085, 0], J.babyHead], [[bh[0] - 0.08, bh[1] + 0.18, 0], [bh[0] + 0.08, bh[1] + 0.18, 0]]] },
     { i: bi('babyHead'), s: 0.05, segs: [[J.babyHead, [bHC[0], bHC[1] + 0.15, 0]]] },
-    ...[1, -1].flatMap(s => { const n = s > 0 ? 'L' : 'R', hp = J['babyLeg' + n]; return [{ i: bi('babyArm' + n), s: 0.035, segs: [[bsh(s), bArmPt(s, [0, -0.3, 0.02])]] }, { i: bi('babyLeg' + n), s: 0.035, segs: [[hp, [hp[0], hp[1] - 0.21, 0.08]]] }]; }),
+    ...[1, -1].flatMap(s => { const n = s > 0 ? 'L' : 'R', hp = J['babyLeg' + n]; return [{ i: bi('babyArm' + n), s: 0.035, segs: [[bsh(s), bArmPt(s, [0, -0.3, 0.02])]], claim: (x, y, z) => { const l = bArmLoc(s, [x, y, z]); return l[1] < -0.025 && Math.hypot(l[0], l[2]) < 0.1; } }, { i: bi('babyLeg' + n), s: 0.035, segs: [[hp, [hp[0], hp[1] - 0.21, 0.08]]] }]; }),
   ]);
   const bstains = [], bst = (c, r, col, mix = 1, e, hard) => bstains.push({ c, r, col, mix, e, hard });
   bst([bHC[0], bHC[1] + 0.06, -0.05], 0.13, hair, 0.9, [1, 1, 0.8]); bst([bHC[0], bHC[1] + 0.02, 0.09], 0.13, babySkin, 1); bst([bHC[0], bHC[1] - 0.06, 0.08], 0.14, babySkin, 1); bst([bHC[0], bHC[1] + 0.1, 0.0], 0.09, babySkin, 1);
