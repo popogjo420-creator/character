@@ -1770,9 +1770,9 @@ function cyclops() {
     // together; the leg itself drapes close over the shoulder, nothing else in front
     const paws = [];
     for (const s of [1, -1]) {
-      const a = [s * 0.5, (s > 0 ? tL : tR)[1] + 0.0, -0.05], m = S([s * 0.56, J.head[1] - 0.25, 0], [0, 0, 1], 0.05, 'torso') || [s * 0.56, J.head[1] - 0.25, 0.4], e = S([s * 0.56, J.head[1] - 0.5, 0], [0, 0, 1], 0.05, 'torso') || [s * 0.56, J.head[1] - 0.5, 0.4];
-      add2(SDF.cap(a, m, 0.1, 0.085, 0.05), SDF.cap(m, e, 0.085, 0.075, 0.05), SDF.ell([e[0], e[1] - 0.07, e[2] + 0.01], [0.12, 0.08, 0.14], 0.04));
-      for (let i = -1.5; i <= 1.5; i++) add2(SDF.sphere([e[0] + i * 0.06, e[1] - 0.1, e[2] + 0.09 - Math.abs(i) * 0.012], 0.035, 0.02));
+      const a = [s * 0.5, (s > 0 ? tL : tR)[1] + 0.0, -0.05], m = S([s * 0.6, J.head[1] - 0.3, 0], [0, 0, 1], 0.1, 'torso') || [s * 0.6, J.head[1] - 0.3, 0.45], e = S([s * 0.6, J.head[1] - 0.62, 0], [0, 0, 1], 0.1, 'torso') || [s * 0.6, J.head[1] - 0.62, 0.45];
+      add2(SDF.cap(a, m, 0.17, 0.15, 0.06), SDF.cap(m, e, 0.15, 0.14, 0.06), SDF.ell([e[0], e[1] - 0.12, e[2] + 0.03], [0.22, 0.13, 0.26], 0.05), SDF.ell([e[0], e[1] - 0.14, e[2] + 0.2], [0.25, 0.1, 0.14], 0.04));
+      for (let i = -2; i <= 2; i++) add2(SDF.sphere([e[0] + i * 0.1, e[1] - 0.14, e[2] + 0.3 - Math.abs(i) * 0.03], 0.062 - Math.abs(i) * 0.006, 0.03));
       paws.push({ e, s });
     }
     const bbear = implicitBody(bp2, bs2, 0.06), bm = bbear.mesh([-1.45, J.head[1] - 1.1, -0.85], [1.45, HY + 0.55, 1.1], 0.016);
@@ -1780,7 +1780,7 @@ function cyclops() {
     bs3(fwd(0, -0.06, 0.5), 0.3, muzzleC, 0.6); bs3(fwd(0, -0.02, 0.76), 0.1, padC, 1); bs3(fwd(0, -0.24, 0.42), 0.26, gum, 1, [0.6, 0.5, 1]); bs3(fwd(0, -0.2, 0.3), 0.18, '#2a0f10', 1, [0.8, 0.4, 1]);
     bs3(fwd(-0.2, 0.08, 0.3), 0.12, '#15100d', 1); bs3(fwd(0.2, 0.1, 0.3), 0.1, bearDk, 0.8); bs3(fwd(-0.07, 0.08, 0.41), 0.4, '#7a4a48', 0.9, [1, 0.06, 0.6], true);
     bs3(fwd(0, -0.38, 0.45), 0.25, '#4a1f1b', 0.6); bs3([-0.45, tR[1] - 0.2, 0.35], 0.3, '#4a1f1b', 0.5); bs3([0, J.head[1] - 0.6, 0.45], 0.3, '#4a1f1b', 0.4, [1, 1.6, 1]);
-    bs3(fwd(0, 0.25, 0), 0.35, bearLt, 0.3); bs3([0, J.head[1] - 0.1, -0.6], 0.9, bearDk, 0.35); for (const { e } of paws) bs3([e[0], e[1] - 0.06, e[2] + 0.12], 0.18, bearLt, 0.25);
+    bs3(fwd(0, 0.25, 0), 0.35, bearLt, 0.3); bs3([0, J.head[1] - 0.1, -0.6], 0.9, bearDk, 0.35); for (const { e } of paws) { bs3([e[0], e[1] - 0.06, e[2] + 0.12], 0.25, bearLt, 0.25); bs3([e[0], e[1] - 0.25, e[2] + 0.2], 0.3, padC, 0.7, [1, 0.4, 1]); }
     const bcol = paintFaces(bm.P, bm.N, bbear, bear, bstn, { aoD: 0.1, mottle: 0.12, scale: 0.6 });
     const bg = new THREE.BufferGeometry(); bg.setAttribute('position', new THREE.BufferAttribute(bm.P, 3)); bg.setAttribute('normal', new THREE.BufferAttribute(bm.N, 3)); bg.setAttribute('color', new THREE.BufferAttribute(bcol, 3));
     // shag fur over the whole animal: tufts seeded on the mesh faces, pointing along the surface and down, two shades,
@@ -1789,7 +1789,7 @@ function cyclops() {
       for (let i = 0; i < bm.n; i += 3) { if ((kk++ % 9) !== 0) continue; const x = (bm.P[i * 3] + bm.P[i * 3 + 3] + bm.P[i * 3 + 6]) / 3, y = (bm.P[i * 3 + 1] + bm.P[i * 3 + 4] + bm.P[i * 3 + 7]) / 3, z = (bm.P[i * 3 + 2] + bm.P[i * 3 + 5] + bm.P[i * 3 + 8]) / 3, nx = bm.N[i * 3], ny = bm.N[i * 3 + 1], nz = bm.N[i * 3 + 2];
         // the face stays bare (muzzle, jaw, eyes, brow); the crown and back of the head get short fur; everything else long
         const inHead = Math.hypot(x - HX, y - HY, z - HZ) < 0.5, face = inHead && (z > HZ + 0.05 || (z > HZ - 0.2 && y < HY + 0.05)); if (face) continue; if (ny < -0.6) continue;
-        const onFace2 = Math.hypot(x - HX, y - HY + 0.2, z - HZ - 0.45) < 0.45; if (onFace2) continue; if (!inHead && z > -0.02 && y < tL[1] + 0.12) continue;
+        const onFace2 = Math.hypot(x - HX, y - HY + 0.2, z - HZ - 0.45) < 0.45; if (onFace2) continue; if (!inHead && z > -0.02 && y < tL[1] + 0.12 && Math.abs(x) < 0.42) continue; if (!inHead && z > 0.1 && y < J.head[1] - 0.55) continue;
         const len = (inHead ? 0.06 + rr(0, 0.04) : 0.12 + rr(0, 0.1) + (z < -0.2 ? 0.08 : 0)), dx = nx * 0.9 + rr(-0.25, 0.25), dy = ny * 0.9 - 0.35 + rr(-0.2, 0.2), dz = nz * 0.9 + rr(-0.25, 0.25), l = Math.hypot(dx, dy, dz), ux = dx / l, uy = dy / l, uz = dz / l;
         B.add('chest', G.ball((inHead ? 0.03 : 0.045) + rr(0, 0.02), rnd() < 0.3 ? bearLt : rnd() < 0.2 ? bearDk : bear, { p: L('chest', [x + nx * 0.02 + ux * len * 0.3, y + ny * 0.02 + uy * len * 0.3, z + nz * 0.02 + uz * len * 0.3]), s: [0.8, len / (inHead ? 0.03 : 0.045) * 0.5, 0.8], r: [Math.atan2(uz, Math.hypot(ux, uy)) * (uy < 0 ? 1 : -1), 0, Math.atan2(-ux, uy)] }, 0)); }
       seed = seed2; }
@@ -1809,7 +1809,7 @@ function cyclops() {
       B.add('bearEye', G.ball(0.085, dead, null, 2), G.ball(0.05, '#8f948a', { p: [0, 0, 0.065], s: [1, 1, 0.5] }, 1), G.ball(0.022, '#2a2a28', { p: [0, 0.005, 0.08], s: [1, 1, 0.45] }, 1), G.box(0.012, 0.19, 0.012, '#6b3a3a', { p: [0, 0, 0.083], r: [0, 0, 0.75] }), G.ball(0.03, '#7a2e2e', { p: [0.03, -0.03, 0.07], s: [1, 1, 0.3] }, 0));
       B.add('chest', G.ball(0.1, bear, { p: L('chest', [ep[0], ep[1] + 0.055, ep[2] + 0.02]), s: [1.1, 0.35, 0.9] }, 1), G.ball(0.095, bearDk, { p: L('chest', [ep[0], ep[1] - 0.07, ep[2] + 0.02]), s: [1.1, 0.25, 0.8] }, 1)); }
     // claws on the forepaws, and the cord tying them together
-    for (const { e } of paws) for (let i = -1.5; i <= 1.5; i++) B.add('chest', G.cone(0.02, 0.12, 4, clawC, { p: L('chest', [e[0] + i * 0.06, e[1] - 0.18, e[2] + 0.11 - Math.abs(i) * 0.012]), r: [PI + 0.3, 0, i * 0.08] }));
+    for (const { e } of paws) for (let i = -2; i <= 2; i++) B.add('chest', G.cone(0.032, 0.2, 4, clawC, { p: L('chest', [e[0] + i * 0.1, e[1] - 0.24, e[2] + 0.38 - Math.abs(i) * 0.03]), r: [PI + 0.6, 0, i * 0.08] }), G.ball(0.022, '#5a4a3a', { p: L('chest', [e[0] + i * 0.1, e[1] - 0.17, e[2] + 0.35 - Math.abs(i) * 0.03]) }, 0));
     { const ca = S([0.42, J.head[1] - 0.2, 0], [0, 0, 1], 0.05, 'torso'), cb = S([-0.42, J.head[1] - 0.2, 0], [0, 0, 1], 0.05, 'torso'); if (ca && cb) B.add('chest', G.stick(L('chest', ca), L('chest', cb), 0.016, 0.016, ropeDk, 4), G.ball(0.035, rope, { p: L('chest', [0, ca[1] - 0.01, ca[2] + 0.02]) }, 0), G.stick(L('chest', [0, ca[1] - 0.01, ca[2] + 0.02]), L('chest', [0.03, ca[1] - 0.2, ca[2]]), 0.012, 0.009, rope, 4)); }
     // the hide: from under the mantle down his back to the ground, flaring, ragged; the hind legs and their paws hang
     // off the bottom corners
@@ -1912,7 +1912,6 @@ function cyclops() {
       G.torus(0.035, 0.012, HW.ironDk, { p: [c[0] + m.rx + 0.03, c[1] - 0.07, c[2]], r: [0, PI / 2, 0] }), ...HW.chain([c[0] + m.rx + 0.05, c[1] - 0.1, c[2]], [c[0] + m.rx + 0.12, c[1] - 0.4, c[2] + 0.04], 5, 0.04),
       G.torus(0.04, 0.012, HW.ironDk, { p: [c[0] + m.rx + 0.14, c[1] - 0.46, c[2] + 0.05], r: [0.4, 0, 0.5], s: [1, 0.5, 1] })); }
     for (const [y, h, col] of [[-up - 0.24, 0.1, '#8f8570'], [-up - 0.3, 0.03, '#a3987e'], [-up - 0.18, 0.03, '#9a9078']]) { const bd = armBand(1, 'f', y, h, col, 0.005); if (bd) B.add('fArmL', bd.geo); }
-    const q = Sa(1, [0, -up - 0.25, 0], [1, 0, 0.3], 0.005); if (q) B.add('fArmL', strip(0.3, 0.04, '#8f8570', { p: fl([q[0], q[1] - 0.17, q[2]]), r: [0, 0, 0.25] }), G.ball(0.022, '#8f8570', { p: fl([q[0], q[1] + 0.0, q[2]]) }, 0));
     acc.push({ part: 'fArmL', c: fl([0.1, -up - 0.25, 0.08]), r: 0.09, col: blood, mix: 0.5 }, { part: 'fArmL', c: fl([0, -up - 0.22, 0]), r: 0.25, col: dirt, mix: 0.35 });
   }
   /* ---- the hands, hard pieces on the forearms like everyone's. Left: an open hand hanging, a palm with the heel of
