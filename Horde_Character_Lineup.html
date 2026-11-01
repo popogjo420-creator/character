@@ -1753,6 +1753,13 @@ function cyclops() {
      you. The paws are enormous, with long claws. Dense shag fur over everything, darker and lighter, ragged at the
      hem; dried blood round the mouth and down the chest. The forelegs are tied paw to paw across his chest. ---- */
   { const bear = '#3a2a1e', bearLt = '#55402e', bearDk = '#261a12', muzzleC = '#5c4836', padC = '#1a1310', gum = '#4a2224', tongueC = '#6b3034', clawC = '#cfc4a6', dead = '#c4bca4';
+    // a claw growing out of a toe at p along unit direction d (down and forward), curving down as it goes: three
+    // segments, dark horn at the root, grey in the middle, pale at the hooked tip; a dark cuticle ring where it leaves
+    // the toe and a tuft of fur over the knuckle. len is the whole claw's length.
+    const claw = (p, d, len, sc = 1) => { const dn = [0, -1, 0], pt = t => { const k = t * t * 0.9; return [p[0] + d[0] * len * t * (1 - k * 0.3), p[1] + (d[1] * len * t) - len * k * 0.55, p[2] + d[2] * len * t * (1 - k * 0.3)]; };
+      const a = pt(-0.15), b = pt(0.35), c = pt(0.7), e = pt(1.0), r0 = 0.05 * sc, r1 = 0.036 * sc, r2 = 0.02 * sc;
+      return [G.stick(a, b, r0, r1, '#4a3b2c', 7), G.stick(b, c, r1, r2, '#7d6f5a', 7), G.stick(c, e, r2, 0.003, '#d2c7a8', 6), G.ball(r1 * 0.9, '#a89c80', { p: b }, 0), G.ball(r2 * 0.9, '#c9bea0', { p: c }, 0),
+        band(r0 * 1.25, 0.018 * sc, '#2a1f16', { p: pt(0.0), r: [Math.atan2(d[2], Math.hypot(d[0], d[1])) * -1 + PI / 2, 0, 0] }), G.ball(0.055 * sc, bear, { p: pt(-0.2), s: [1.1, 0.8, 1] }, 1), G.ball(0.04 * sc, bearLt, { p: [pt(-0.2)[0], pt(-0.2)[1] + 0.03 * sc, pt(-0.2)[2] - 0.02 * sc], s: [1, 0.6, 1] }, 0)]; };
     const tR = S([-shX, J.uArmL[1], 0], [0, 1, 0], 0, 'armR') || [-shX, J.uArmL[1] + 0.26, 0], tL = S([shX, J.uArmL[1], 0], [0, 1, 0], 0, 'armL') || [shX, J.uArmL[1] + 0.26, 0];
     const HY = tR[1] + 0.42, HX = -0.62, HZ = 0.12, hc = [HX, HY, HZ], fwd = (x, y, z) => [HX + x, HY + y, HZ + z];
     const bp2 = [], bs2 = [], add2 = (...ps) => { for (const p of ps) { p.g = 'bear'; bp2.push(p); } };
@@ -1814,7 +1821,7 @@ function cyclops() {
       B.add('bearEye', G.ball(0.085, dead, null, 2), G.ball(0.05, '#8f948a', { p: [0, 0, 0.065], s: [1, 1, 0.5] }, 1), G.ball(0.022, '#2a2a28', { p: [0, 0.005, 0.08], s: [1, 1, 0.45] }, 1), G.box(0.012, 0.19, 0.012, '#6b3a3a', { p: [0, 0, 0.083], r: [0, 0, 0.75] }), G.ball(0.03, '#7a2e2e', { p: [0.03, -0.03, 0.07], s: [1, 1, 0.3] }, 0));
       B.add('chest', G.ball(0.1, bear, { p: L('chest', [ep[0], ep[1] + 0.055, ep[2] + 0.02]), s: [1.1, 0.35, 0.9] }, 1), G.ball(0.095, bearDk, { p: L('chest', [ep[0], ep[1] - 0.07, ep[2] + 0.02]), s: [1.1, 0.25, 0.8] }, 1)); }
     // claws on the forepaws, and the cord tying them together
-    for (const { e } of paws) for (let i = -2; i <= 2; i++) B.add('chest', G.cone(0.032, 0.2, 4, clawC, { p: L('chest', [e[0] + i * 0.1, e[1] - 0.24, e[2] + 0.38 - Math.abs(i) * 0.03]), r: [PI + 0.6, 0, i * 0.08] }), G.ball(0.022, '#5a4a3a', { p: L('chest', [e[0] + i * 0.1, e[1] - 0.17, e[2] + 0.35 - Math.abs(i) * 0.03]) }, 0));
+    for (const { e } of paws) for (let i = -2; i <= 2; i++) { const d = [i * 0.12, -0.45, 0.88], l = Math.hypot(...d); B.add('chest', ...claw(L('chest', [e[0] + i * 0.1, e[1] - 0.15, e[2] + 0.33 - Math.abs(i) * 0.03]), d.map(v => v / l), 0.26 - Math.abs(i) * 0.02).map(g2 => g2)); }
     { const ca = S([0.42, J.head[1] - 0.2, 0], [0, 0, 1], 0.05, 'torso'), cb = S([-0.42, J.head[1] - 0.2, 0], [0, 0, 1], 0.05, 'torso'); if (ca && cb) B.add('chest', G.stick(L('chest', ca), L('chest', cb), 0.016, 0.016, ropeDk, 4), G.ball(0.035, rope, { p: L('chest', [0, ca[1] - 0.01, ca[2] + 0.02]) }, 0), G.stick(L('chest', [0, ca[1] - 0.01, ca[2] + 0.02]), L('chest', [0.03, ca[1] - 0.2, ca[2]]), 0.012, 0.009, rope, 4)); }
     // the hide: from under the mantle down his back to the ground, flaring, ragged; the hind legs and their paws hang
     // off the bottom corners
@@ -1829,7 +1836,7 @@ function cyclops() {
       seed = seed2; }
     for (const s of [1, -1]) { const a = onHide(s * 0.4, 0.62), b2 = onHide(s * 0.42, 0.9), pw = [b2[0] + s * 0.05, b2[1] - 0.02, b2[2] + 0.12];
       B.add('cape', G.stick(a, b2, 0.17, 0.14, bear, 8), G.ball(0.17, bear, { p: a }, 1), G.ball(0.15, bear, { p: b2 }, 1), G.ball(0.2, bear, { p: pw, s: [1.2, 0.6, 1.4] }, 1), G.ball(0.14, padC, { p: [pw[0], pw[1] - 0.09, pw[2] + 0.05], s: [1, 0.3, 1.1] }, 1));
-      for (let i = -2; i <= 2; i++) B.add('cape', G.ball(0.055, bear, { p: [pw[0] + i * 0.09, pw[1] - 0.04, pw[2] + 0.24 - Math.abs(i) * 0.02] }, 0), G.cone(0.03, 0.18, 4, clawC, { p: [pw[0] + i * 0.09, pw[1] - 0.1, pw[2] + 0.36 - Math.abs(i) * 0.02], r: [PI / 2 + 0.5, 0, i * 0.1] }));
+      for (let i = -2; i <= 2; i++) { const d = [i * 0.12, -0.35, 0.92], l = Math.hypot(...d); B.add('cape', G.ball(0.055, bear, { p: [pw[0] + i * 0.09, pw[1] - 0.04, pw[2] + 0.24 - Math.abs(i) * 0.02] }, 0), ...claw([pw[0] + i * 0.09, pw[1] - 0.05, pw[2] + 0.27 - Math.abs(i) * 0.02], d.map(v => v / l), 0.24 - Math.abs(i) * 0.02)); }
       for (let i = 0; i < 14; i++) { const q = HW.mix(a, b2, (i + 0.5) / 14), an = i * 1.7; B.add('cape', G.ball(0.05, i % 3 ? bear : bearLt, { p: [q[0] + Math.cos(an) * 0.15, q[1] - 0.05, q[2] + Math.sin(an) * 0.12 - 0.05], s: [0.8, 2.6, 0.7], r: [-0.3, 0, Math.cos(an) * 0.5] }, 0)); } }
     acc.push({ part: 'cape', c: [0, -CH, 0], r: 1.4, col: dirt, mix: 0.45, e: [1.5, 0.3, 1] }, { part: 'cape', c: [0.4, -CH * 0.4, -0.1], r: 0.6, col: bearDk, mix: 0.35 }, { part: 'cape', c: [-0.5, -CH * 0.7, -0.2], r: 0.5, col: bearLt, mix: 0.3 }, { part: 'cape', c: [-0.3, -0.3, -0.1], r: 0.5, col: '#4a1f1b', mix: 0.3 }); }
   { const N = 26, pts = []; for (let i = 0; i <= N; i++) { const a = -PI + i * TAU / N, y = 2.7 - 0.2 * Math.max(0, Math.cos(a)) - 0.05 * Math.cos(a), p = onTorso(y, a, 0.03); pts.push(p); }
